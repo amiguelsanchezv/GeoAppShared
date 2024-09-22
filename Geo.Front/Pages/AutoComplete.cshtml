@@ -1,0 +1,43 @@
+﻿@page
+@model AutoCompleteModel
+@{
+    ViewData["Title"] = "AutoComplete";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div style="text-align: center; display: grid; grid-template-columns: 6fr 1fr; grid-gap: 10px;">
+    <input type="text" id="autocomplete" placeholder="Escriba una ubicacion aqui..." />
+    <button id="myButton">Crear mapa</button>
+</div>
+
+<div id="mapas"></div>
+
+@section maps_script {
+    <script async src="https://maps.googleapis.com/maps/api/js?libraries=places,marker&key={key_google_maps}&loading=async&callback=initAutoComplete&v=beta&solution_channel=GMP_CCS_complexmarkers_v3"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function initAutoComplete() {
+            var input = $('#autocomplete')[0];
+            var autocomplete = new google.maps.places.Autocomplete(input);
+
+            const myButton = $("#myButton");
+            myButton.on('click', function() {
+                var place = autocomplete.getPlace();
+                getGoogleMapsIFrame(place.formatted_address);
+            });
+        }
+
+        function getGoogleMapsIFrame(address) {
+            const mapUrl = `https://www.google.com/maps/embed/v1/place?q=${encodeURIComponent(address)}&key={key_google_maps}`;
+
+            const iframe = $('<iframe></iframe');
+                iframe.attr('src', mapUrl);
+                iframe.attr('height', '450');
+                iframe.attr('frameborder', '0');
+                iframe.attr('style', 'border: 0; width: 100%; margin-top: 15px;');
+
+            $('#mapas').append(iframe);
+        }
+    </script>
+}

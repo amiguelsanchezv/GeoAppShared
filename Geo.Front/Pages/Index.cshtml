@@ -1,0 +1,55 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Mapas";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div id="map" style="width: 100%; height: 400px;"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={key_google_maps}&callback=initMap&v=weekly&loading=async" defer>
+</script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    async function initMap() {
+        const { Map } = await google.maps.importLibrary("maps");
+        const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+
+        const pinTextGlyph = new PinElement({
+            glyph: "T",
+            glyphColor: "white",
+        });
+
+      const map = new Map(document.getElementById("map"), {
+        zoom: 14,
+        center: { lat: 4.62745443143607, lng: -74.1698114841462 },
+        mapId: "4504f8b37365c3d0"
+      });
+
+      var polilineas = @Json.Serialize(ViewData["PoliLineas"]);
+      var camaras = @Json.Serialize(ViewData["Camaras"]);
+
+      polilineas.forEach((poliLinea) => {
+          var fiber = new google.maps.Polyline({
+              path: poliLinea.coordenadas,
+              geodesic: true,
+              strokeColor: poliLinea.coordenadas.length >= 200 ? "#FF0000" : '#00BB2D',
+              strokeOpacity: 1.0,
+              strokeWeight: 2
+          });
+          fiber.setMap(map);
+      });
+
+      camaras.forEach((camara) => {
+          var marker = new AdvancedMarkerElement({
+              position: camara.coordenada,
+              title: camara.id
+          });
+          marker.setMap(map);
+      });
+    }
+
+    window.initMap = initMap;
+</script>

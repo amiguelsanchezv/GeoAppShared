@@ -1,0 +1,6 @@
+@Geo.Api_HostAddress = http://localhost:5038
+
+GET {{Geo.Api_HostAddress}}/georeferencepoint/
+Accept: application/json
+
+###
